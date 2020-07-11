@@ -9,5 +9,8 @@ HEIGHT = 600
 
 BACKGROUND_COLOR = colors.white
 
+def main():
+    pass
+
 
 
