@@ -42,8 +42,8 @@ class Button:
 			return False
 
 	def draw(self):
-		pygame.draw.rect(self.surface, self.color, [self.x, self.y, self.width, self.height])
-		text = self.font.render(self.name, Truen, self.color)
+		pygame.draw.rect(self.screen, self.color, [self.x, self.y, self.width, self.height])
+		text = self.font.render(self.name, True, self.color)
 		self.screen.blit(text, (self.x + self.width, self.y))
 
 
@@ -61,7 +61,7 @@ class Menu:
 		self.buttons = [self.add_top, self.add_edge, self.delete_top, self.delete_edge]
 
 	def draw_background(self):
-		pygame.draw.rect(self.screen, self.color, [MENU_WIDTH, 0, screen_width-MENU_WIDTH, screen_height])
+		pygame.draw.rect(self.screen, self.color, [MENU_WIDTH, 0, self.screen_width-MENU_WIDTH, self.screen_height])
 
 	def draw(self):
 		self.draw_background()
