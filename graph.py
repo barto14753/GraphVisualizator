@@ -17,46 +17,6 @@ EDGE_COLOR = colors.blue
 EDGE_WIDTH = 2
 EDGE_BASE_FLOW = 10
 
-#BUTTON PARAMETERS
-BUTTON_COLOR = colors.orange
-BUTTON_PRESSED_COLOR = colors.light_green
-BUTTON_WIDTH = 50
-BUTTON_HEIGHT
-BUTTON_FONT = pygame.font.Font("font1.ttf", 32)
-
-
-#MENU PARAMETERS
-MENU_WIDTH = 800
-
-
-
-class Button:
-	def __init__(self, screen, name, pos_x, pos_y, width=BUTTON_WIDTH, height=BUTTON_HEIGHT, color=BUTTON_COLOR, font=BUTTON_FONT):
-		self.screen = screen
-		self.name = name
-		self.font = font
-		self.x = pos_x
-		self.y = pos_y
-		self.width = width
-		self.height = height
-		self.color = color
-		self.pressed = False
-
-	def is_pressed(self, pos_x, pos_y):
-		if pos_x - self.x <= self.width and pos_y - self.y <= self.height:
-			self.pressed = True
-			return True
-		else:
-			self.pressed = False
-			return False
-
-	def draw(self):
-		pygame.draw.rect(self.surface, self.color, [self.x, self.y, self.width, self.height])
-		text = self.font.render(self.name, Truen, self.color)
-		self.screen.blit(text, (self.x + self.width, self.y))
-
-
-
 
 class Top:
 	def __init__(self, screen, index, value, pos_x, pos_y, radius=TOP_RADIUS, color=TOP_COLOR):
@@ -110,11 +70,9 @@ class Graph:
 		self.tops = []
 		self.edges = []
 
+	
 
-class Menu:
-	def __init__(self, screen):
-		self.screen = screen
-		self.add_top = Button(self.screen, )
+
 
 
 
