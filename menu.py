@@ -8,7 +8,7 @@ colors = Color()
 
 #BUTTON PARAMETERS
 BUTTON_COLOR = colors.light_purple
-BUTTON_PRESSED_COLOR = colors.light_green
+BUTTON_PRESSED_COLOR = colors.red
 BUTTON_WIDTH = 50
 BUTTON_HEIGHT = 50
 BUTTON_FONT = pygame.font.Font("font1.ttf", 20)
@@ -18,9 +18,26 @@ BUTTON_SECOND_GAP = 50
 
 #MENU PARAMETERS
 MENU_WIDTH = 800
-MENU_COLOR = colors.white
+MENU_COLOR = colors.light_green
+
+#LABEL PARAMETERS
+LABEL_FONT = pygame.font.Font("font1.ttf", 25)
+LABEL_COLOR = colors.red
 
 
+
+class Label:
+	def __init__(self, screen, name, pos_x, pos_y, font=LABEL_FONT, color=LABEL_COLOR):
+		self.screen = screen
+		self.name = name
+		self.font = font
+		self.color = color
+		self.x = pos_x
+		self.y = pos_y
+
+	def draw(self):
+		text = self.font.render(self.name, True, self.color)
+		self.screen.blit(text, (self.x, self.y))
 
 class Button:
 	def __init__(self, screen, name, pos_x, pos_y, width=BUTTON_WIDTH, height=BUTTON_HEIGHT, color=BUTTON_COLOR, font=BUTTON_FONT):
@@ -35,7 +52,7 @@ class Button:
 		self.pressed = False
 
 	def is_pressed(self, pos_x, pos_y):
-		if not self.pressed and abs(pos_x - self.x) <= self.width and abs(pos_y - self.y) <= self.height:
+		if not self.pressed and -self.width <= (pos_x - self.x) <= self.width and -self.height <= (pos_y - self.y) <= self.height:
 			if not self.pressed:
 				self.pressed = True
 				self.color = BUTTON_PRESSED_COLOR
@@ -58,11 +75,13 @@ class Menu:
 		self.screen_width = screen_width
 		self.screen_height = screen_height
 		self.color = MENU_COLOR
+		self.title = Label(self.screen, "GraphVisualizator", MENU_WIDTH + BUTTON_SECOND_GAP, 0)
 		self.add_top = Button(self.screen, "Add Top", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP)
 		self.add_edge = Button(self.screen, "Add Edge", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + BUTTON_GAP)
 		self.delete_top = Button(self.screen, "Delete Top", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 2*BUTTON_GAP)
 		self.delete_edge = Button(self.screen, "Delete Edge", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 3*BUTTON_GAP)
 
+		self.labels = [self.title]
 		self.buttons = [self.add_top, self.add_edge, self.delete_top, self.delete_edge]
 
 	def click(self, pos_x, pos_y):
@@ -74,6 +93,8 @@ class Menu:
 
 	def draw(self):
 		self.draw_background()
+		for label in self.labels:
+			label.draw()
 		for button in self.buttons:
 			button.draw()
 

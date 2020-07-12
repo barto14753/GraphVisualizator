@@ -16,6 +16,8 @@ def main():
 	pygame.init()
 	pygame.font.init()
 
+
+
 	screen = pygame.display.set_mode((WIDTH, HEIGHT))
 	G = Graph(screen)
 	menu = Menu(screen, WIDTH, HEIGHT)
@@ -32,7 +34,7 @@ def main():
 				pos_x, pos_y = pygame.mouse.get_pos()
 				menu.click(pos_x, pos_y)
 
-		screen.fill(colors.black)
+		screen.fill(BACKGROUND_COLOR)
 		menu.draw()
 		pygame.display.flip()
 
