@@ -1,6 +1,8 @@
 import pygame
 import random
 from colors import Color
+import menu
+import graph
 
 colors = Color()
 
@@ -14,6 +16,9 @@ def main():
 	pygame.font.init()
 
 	screen = pygame.display.set_mode((WIDTH, HEIGHT))
+	graph = graph.Graph(screen)
+	menu = menu.Menu(screen, WIDTH, HEIGHT)
+
 
 	running = True
 
@@ -22,6 +27,10 @@ def main():
 			if event.type == pygame.QUIT:
 				running = False
 				pygame.quit()
+		screen.blit(colors.black)
+		menu.draw()
+		pygame.display.flip()
+
 
 
 main()
