@@ -1,5 +1,6 @@
 import pygame
 import random
+import time
 from colors import Color
 from menu import Menu
 from graph import Graph
@@ -27,6 +28,10 @@ def main():
 			if event.type == pygame.QUIT:
 				running = False
 				pygame.quit()
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				pos_x, pos_y = pygame.mouse.get_pos()
+				menu.click(pos_x, pos_y)
+
 		screen.fill(colors.black)
 		menu.draw()
 		pygame.display.flip()
