@@ -39,7 +39,7 @@ class Top:
 
 	def draw(self):
 		self.update_color()
-		pygame.draw.circle(self.screen, self.color, (self.x-self.radius, self.y-self.radius), self.radius)
+		pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.radius)
 
 	def is_on_coursor(self, pos_x, pos_y):
 		if abs(self.x - pos_x) <= self.radius and abs(self.y - pos_y) <= self.radius:
@@ -105,6 +105,24 @@ class Graph:
 							self.pressed[i].pressed = False
 							self.pressed.pop(i)
 
+	def delete_edges_associated_with_delted_top(self, top):
+		to_delete = []
+		for i in range(len(self.edges)):
+			if self.edges[i].start_top is top or self.edges[i].end_top is top:
+				to_delete.append(i)
+		for i in range(len(to_delete)-1, -1, -1):
+			self.edges.pop(to_delete[i])
+
+	def is_edge_already_exist(self):
+		start = self.pressed[0]
+		end = self.pressed[1]
+		for edge in self.edges:
+			if edge.start_top is start and edge.end_top is end or edge.start_top is end and edge.end_top is start:
+				self.reset_pressed()
+				return True
+
+		return False
+
 
 	def reset_pressed(self):
 		for i in range(len(self.pressed)):
@@ -115,31 +133,37 @@ class Graph:
 		self.reset_pressed()
 		new_top = Top(screen=self.screen, index=self.ids, value=value, pos_x=pos_x, pos_y=pos_y)
 		self.tops.append(new_top)
+		print(len(self.tops))
 
 	def add_edge(self):
 		if len(self.pressed) < 2:
 			return False
 		else:
-			new_edge = Edge(screen=self.screen, start_top=self.pressed[0], end_top=end_top[0])
-			self.edges.append(new_edge)
-			self.reset_pressed()
+			if not self.is_edge_already_exist():
+				new_edge = Edge(screen=self.screen, start_top=self.pressed[0], end_top=self.pressed[1])
+				self.edges.append(new_edge)
+				self.reset_pressed()
 
 
 	def delete_top(self, pos_x, pos_y):
 		for i in range(len(self.tops)):
 			if self.tops[i].is_on_coursor(pos_x, pos_y):
+				self.delete_edges_associated_with_delted_top(self.tops[i])
 				self.tops.pop(i)
 				self.reset_pressed()
 				return True
 		return False
 
 	def delete_edge(self):
-		for i in range(len(self.edges)):
-			if self.edges[i].is_focused(self.pressed[0], self.pressed[1]) or self.edges[i].is_focused(self.pressed[1], self.pressed[0]):
-				self.edges.pop(i)
-				self.reset_pressed()
-				return True
-		return False
+		if len(self.pressed) < 2:
+			return False
+		else:
+			for i in range(len(self.edges)):
+				if self.edges[i].is_focused(self.pressed[0], self.pressed[1]) or self.edges[i].is_focused(self.pressed[1], self.pressed[0]):
+					self.edges.pop(i)
+					self.reset_pressed()
+					return True
+			return False
 
 	def draw(self):
 		for edge in self.edges:

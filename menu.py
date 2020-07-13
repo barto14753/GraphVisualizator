@@ -90,12 +90,19 @@ class Menu:
 			return True
 		return False
 
+	def update_max_tops_pressed(self):
+		if self.add_edge.pressed or self.delete_edge.pressed:
+			self.graph.limit_pressed = 2
+		else:
+			self.graph.limit_pressed = 1
+
 	def click(self, pos_x, pos_y):
 		print((pos_x, pos_y))
 		if self.is_focused_on_menu(pos_x, pos_y):
 			for button in self.buttons:
 				button.is_pressed(pos_x, pos_y)
 		else:
+			self.update_max_tops_pressed()
 			self.graph.update_pressed(pos_x, pos_y)
 
 			if self.add_top.pressed:

@@ -30,12 +30,13 @@ def main():
 			if event.type == pygame.QUIT:
 				running = False
 				pygame.quit()
+				return 0
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				pos_x, pos_y = pygame.mouse.get_pos()
 				menu.click(pos_x, pos_y)
 
 		screen.fill(BACKGROUND_COLOR)
-		G.draw
+		G.draw()
 		menu.draw()
 		pygame.display.flip()
 
