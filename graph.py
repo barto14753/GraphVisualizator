@@ -4,6 +4,7 @@ import math
 import time
 from colors import Color
 from queue import Queue
+from pygame import gfxdraw
 
 pygame.init()
 pygame.font.init()
@@ -22,6 +23,18 @@ EDGE_VISITED_COLOR = colors.black
 EDGE_WIDTH = 10
 EDGE_BASE_FLOW = 10
 
+#RANDOMIZE
+RANDOM_EDGES_RATE = 5
+
+
+
+def draw_circle(surface, color, x, y, radius):
+    gfxdraw.aacircle(surface, x, y, radius, color)
+    gfxdraw.filled_circle(surface, x, y, radius, color)
+
+
+def draw_line(surface, x1, y1, x2, y2, color):
+	gfxdraw.line(surface, x1, y1, x2, y2, color)
 
 class Top:
 	def __init__(self, screen, index, value, pos_x, pos_y, radius=TOP_RADIUS, color=TOP_COLOR):
@@ -43,10 +56,10 @@ class Top:
 
 	def draw(self):
 		self.update_color()
-		pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.radius)
+		draw_circle(self.screen, self.color, self.x, self.y, self.radius)
 
 	def raw_draw(self):
-		pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.radius)
+		draw_circle(self.screen, self.color, self.x, self.y, self.radius)
 
 
 	def is_on_coursor(self, pos_x, pos_y):
@@ -63,6 +76,10 @@ class Top:
 				self.pressed = True
 			return True
 		return False
+
+	def move(self, pos_x, pos_y):
+		self.x = pos_x
+		self.y = pos_y
 
 
 class Edge:
@@ -83,9 +100,15 @@ class Edge:
 			return True
 		return False
 
+	def update(self):
+		self.start_x = self.start_top.x
+		self.start_y = self.start_top.y
+		self.end_x = self.end_top.x
+		self.end_y = self.end_top.y
+
+
 	def draw(self):
-		pygame.draw.aaline(self.screen, self.color, (self.start_x,self.start_y),
-			(self.end_x,self.end_y), self.width)
+		draw_line(self.screen, self.start_x, self.start_y, self.end_x, self.end_y, self.color)
 
 
 
@@ -192,7 +215,6 @@ class Graph:
 		for top in self.tops:
 			top.raw_draw()
 
-
 	def reset_visited(self):
 		for top in self.tops:
 			top.visited = False
@@ -211,7 +233,7 @@ class Graph:
 
 			self.raw_draw()
 			pygame.display.flip()
-			time.sleep(0.5)
+			time.sleep(0.1)
 
 			for edge in self.edges:
 				if edge.start_top is top:
@@ -227,7 +249,6 @@ class Graph:
 		else:
 			dfs(self, self.pressed[0])
 			
-
 	def BFS(self):
 		if len(self.pressed) != 1:
 			return False
@@ -238,7 +259,7 @@ class Graph:
 			while not q.empty():
 				self.raw_draw()
 				pygame.display.flip()
-				time.sleep(0.5)
+				time.sleep(0.1)
 
 				for event in pygame.event.get():
 					if event.type == pygame.QUIT:
@@ -256,20 +277,29 @@ class Graph:
 							q.put(edge.start_top)
 							edge.color = EDGE_VISITED_COLOR
 
+	def move_top(self, pos_x, pos_y):
+		if len(self.pressed) > 0:
+			top = self.pressed[len(self.pressed)-1]
+			top.move(pos_x, pos_y)
+			top.color = TOP_PRESSED_COLOR
 
+			for edge in self.edges:
+				if edge.start_top is top or edge.end_top is top:
+					edge.update()
 
+	def random_edges(self):
+		self.clear_edges()
+		for i in range(len(self.tops)):
+			for j in range(i+1, len(self.tops)):
+				if random.randint(0, 100) < RANDOM_EDGES_RATE:
+					new = new_edge = Edge(screen=self.screen, start_top=self.tops[i], end_top=self.tops[j])
+					self.edges.append(new)
 
-
-
-
-
-
-
-
-
-
-
-
+	def full_edges(self):
+		for i in range(len(self.tops)):
+			for j in range(i+1, len(self.tops)):
+				new = new_edge = Edge(screen=self.screen, start_top=self.tops[i], end_top=self.tops[j])
+				self.edges.append(new)
 
 
 

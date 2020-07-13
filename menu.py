@@ -9,11 +9,11 @@ colors = Color()
 #BUTTON PARAMETERS
 BUTTON_COLOR = colors.light_purple
 BUTTON_PRESSED_COLOR = colors.red
-BUTTON_WIDTH = 50
-BUTTON_HEIGHT = 50
-BUTTON_FONT = pygame.font.Font("font1.ttf", 20)
-BUTTON_START_GAP = 65
-BUTTON_GAP = 65
+BUTTON_WIDTH = 40
+BUTTON_HEIGHT = 40
+BUTTON_FONT = pygame.font.Font("font1.ttf", 15)
+BUTTON_START_GAP = 80
+BUTTON_GAP = 50
 BUTTON_SECOND_GAP = 50
 
 #MENU PARAMETERS
@@ -83,12 +83,16 @@ class Menu:
 		self.delete_edge = Button(self.screen, "Delete Edge", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 3*BUTTON_GAP)
 		self.clear_tops = Button(self.screen, "Clear Tops", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 4*BUTTON_GAP)
 		self.clear_edges = Button(self.screen, "Clear Edges", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 5*BUTTON_GAP)
-		self.dfs = Button(self.screen, "DFS", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 6*BUTTON_GAP)
-		self.bfs = Button(self.screen, "BFS", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 7*BUTTON_GAP)
+		self.random_edges = Button(self.screen, "Random Edges", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 6*BUTTON_GAP)
+		self.full_edges = Button(self.screen, "Full Edges", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 7*BUTTON_GAP)
+		self.dfs = Button(self.screen, "DFS", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 8*BUTTON_GAP)
+		self.bfs = Button(self.screen, "BFS", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 9*BUTTON_GAP)
 
 		self.labels = [self.title]
 		self.buttons = [self.add_top, self.add_edge, self.delete_top, self.delete_edge, 
-						self.clear_tops, self.clear_edges, self.dfs, self.bfs]
+						self.clear_tops, self.clear_edges, self.dfs, self.bfs, self.full_edges, self.random_edges]
+		
+
 
 	def is_focused_on_menu(self, pos_x, pos_y):
 		if MENU_WIDTH < pos_x:
@@ -100,6 +104,12 @@ class Menu:
 			self.graph.limit_pressed = 2
 		else:
 			self.graph.limit_pressed = 1
+
+	def any_button_active(self):
+		for button in self.buttons:
+			if button.pressed:
+				return True
+		return False
 
 	def click(self, pos_x, pos_y):
 		if len(self.graph.tops) > 0:
@@ -117,6 +127,12 @@ class Menu:
 			elif self.clear_edges.pressed:
 				self.graph.clear_edges()
 				self.clear_edges.pressed = False
+
+			elif self.random_edges.pressed:
+				self.graph.random_edges()
+
+			elif self.full_edges.pressed:
+				self.graph.full_edges()
 
 			elif self.dfs.pressed:
 				self.graph.DFS()
@@ -139,6 +155,7 @@ class Menu:
 				
 			elif self.delete_edge.pressed:
 				self.graph.delete_edge()
+
 				
 
 

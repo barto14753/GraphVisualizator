@@ -36,6 +36,12 @@ def main():
 				pos_x, pos_y = pygame.mouse.get_pos()
 				menu.click(pos_x, pos_y)
 
+		if pygame.mouse.get_pressed()[0] and not menu.any_button_active():
+			x, y = pygame.mouse.get_pos()
+			if not menu.is_focused_on_menu(x,y):
+				G.move_top(x, y)
+				
+
 		screen.fill(BACKGROUND_COLOR)
 		G.draw()
 		menu.draw()
