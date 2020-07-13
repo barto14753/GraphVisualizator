@@ -19,6 +19,7 @@ def main():
 
 
 	screen = pygame.display.set_mode((WIDTH, HEIGHT))
+	pygame.display.set_caption('GraphVisualizator')
 	G = Graph(screen)
 	menu = Menu(G, screen, WIDTH, HEIGHT)
 
@@ -39,7 +40,6 @@ def main():
 		G.draw()
 		menu.draw()
 		pygame.display.flip()
-
 
 
 main()

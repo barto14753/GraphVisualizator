@@ -1,7 +1,9 @@
 import pygame
 import random
 import math
+import time
 from colors import Color
+from queue import Queue
 
 pygame.init()
 pygame.font.init()
@@ -10,12 +12,14 @@ colors = Color()
 
 # GRAPH PARAMETERS
 TOP_COLOR = colors.green
+TOP_VISITED_COLOR = colors.black
 TOP_PRESSED_COLOR = colors.red
 TOP_RADIUS = 15
 
 #EDGE PARAMETERS
 EDGE_COLOR = colors.blue
-EDGE_WIDTH = 2
+EDGE_VISITED_COLOR = colors.black
+EDGE_WIDTH = 10
 EDGE_BASE_FLOW = 10
 
 
@@ -29,7 +33,7 @@ class Top:
 		self.radius = radius
 		self.color = color
 		self.pressed = False
-
+		self.visited = False
 
 	def update_color(self):
 		if self.pressed:
@@ -40,6 +44,10 @@ class Top:
 	def draw(self):
 		self.update_color()
 		pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.radius)
+
+	def raw_draw(self):
+		pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.radius)
+
 
 	def is_on_coursor(self, pos_x, pos_y):
 		if abs(self.x - pos_x) <= self.radius and abs(self.y - pos_y) <= self.radius:
@@ -76,7 +84,7 @@ class Edge:
 		return False
 
 	def draw(self):
-		pygame.draw.line(self.screen, self.color, (self.start_x,self.start_y),
+		pygame.draw.aaline(self.screen, self.color, (self.start_x,self.start_y),
 			(self.end_x,self.end_y), self.width)
 
 
@@ -123,7 +131,6 @@ class Graph:
 
 		return False
 
-
 	def reset_pressed(self):
 		for i in range(len(self.pressed)):
 			self.pressed[0].pressed = False
@@ -133,7 +140,6 @@ class Graph:
 		self.reset_pressed()
 		new_top = Top(screen=self.screen, index=self.ids, value=value, pos_x=pos_x, pos_y=pos_y)
 		self.tops.append(new_top)
-		print(len(self.tops))
 
 	def add_edge(self):
 		if len(self.pressed) < 2:
@@ -143,7 +149,6 @@ class Graph:
 				new_edge = Edge(screen=self.screen, start_top=self.pressed[0], end_top=self.pressed[1])
 				self.edges.append(new_edge)
 				self.reset_pressed()
-
 
 	def delete_top(self, pos_x, pos_y):
 		for i in range(len(self.tops)):
@@ -165,11 +170,97 @@ class Graph:
 					return True
 			return False
 
+	def clear_tops(self):
+		for i in range(len(self.tops)):
+			self.tops.pop()
+		for i in range(len(self.edges)):
+			self.edges.pop()
+
+	def clear_edges(self):
+		for i in range(len(self.edges)):
+			self.edges.pop()
+
 	def draw(self):
 		for edge in self.edges:
 			edge.draw()
 		for top in self.tops:
 			top.draw()
+
+	def raw_draw(self):
+		for edge in self.edges:
+			edge.draw()
+		for top in self.tops:
+			top.raw_draw()
+
+
+	def reset_visited(self):
+		for top in self.tops:
+			top.visited = False
+			top.color = TOP_COLOR
+		for edge in self.edges:
+			edge.color = EDGE_COLOR
+
+	def DFS(self):
+
+		def dfs(self, top):
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					print("quit")
+			top.visited = True
+			top.color = TOP_VISITED_COLOR
+
+			self.raw_draw()
+			pygame.display.flip()
+			time.sleep(0.5)
+
+			for edge in self.edges:
+				if edge.start_top is top:
+					if not edge.end_top.visited:
+						edge.color = EDGE_VISITED_COLOR
+						dfs(self, edge.end_top)
+				elif edge.end_top is top:
+					if not edge.start_top.visited:
+						edge.color = EDGE_VISITED_COLOR
+						dfs(self, edge.start_top)
+		if len(self.pressed) != 1:
+			return False
+		else:
+			dfs(self, self.pressed[0])
+			
+
+	def BFS(self):
+		if len(self.pressed) != 1:
+			return False
+		else:
+			q = Queue()
+			q.put(self.pressed[0])
+
+			while not q.empty():
+				self.raw_draw()
+				pygame.display.flip()
+				time.sleep(0.5)
+
+				for event in pygame.event.get():
+					if event.type == pygame.QUIT:
+						return
+
+				top = q.get()
+				if not top.visited:
+					top.visited = True
+					top.color = TOP_VISITED_COLOR
+					for edge in self.edges:
+						if edge.start_top is top:
+							q.put(edge.end_top)
+							edge.color = EDGE_VISITED_COLOR
+						elif edge.end_top is top:
+							q.put(edge.start_top)
+							edge.color = EDGE_VISITED_COLOR
+
+
+
+
+
+
 
 
 

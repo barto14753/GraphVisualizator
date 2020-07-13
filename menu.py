@@ -12,8 +12,8 @@ BUTTON_PRESSED_COLOR = colors.red
 BUTTON_WIDTH = 50
 BUTTON_HEIGHT = 50
 BUTTON_FONT = pygame.font.Font("font1.ttf", 20)
-BUTTON_START_GAP = 100
-BUTTON_GAP = 100
+BUTTON_START_GAP = 65
+BUTTON_GAP = 65
 BUTTON_SECOND_GAP = 50
 
 #MENU PARAMETERS
@@ -81,9 +81,14 @@ class Menu:
 		self.add_edge = Button(self.screen, "Add Edge", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + BUTTON_GAP)
 		self.delete_top = Button(self.screen, "Delete Top", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 2*BUTTON_GAP)
 		self.delete_edge = Button(self.screen, "Delete Edge", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 3*BUTTON_GAP)
+		self.clear_tops = Button(self.screen, "Clear Tops", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 4*BUTTON_GAP)
+		self.clear_edges = Button(self.screen, "Clear Edges", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 5*BUTTON_GAP)
+		self.dfs = Button(self.screen, "DFS", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 6*BUTTON_GAP)
+		self.bfs = Button(self.screen, "BFS", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 7*BUTTON_GAP)
 
 		self.labels = [self.title]
-		self.buttons = [self.add_top, self.add_edge, self.delete_top, self.delete_edge]
+		self.buttons = [self.add_top, self.add_edge, self.delete_top, self.delete_edge, 
+						self.clear_tops, self.clear_edges, self.dfs, self.bfs]
 
 	def is_focused_on_menu(self, pos_x, pos_y):
 		if MENU_WIDTH < pos_x:
@@ -97,25 +102,45 @@ class Menu:
 			self.graph.limit_pressed = 1
 
 	def click(self, pos_x, pos_y):
-		print((pos_x, pos_y))
+		if len(self.graph.tops) > 0:
+			if self.graph.tops[0].visited:
+				self.graph.reset_visited()
+				
 		if self.is_focused_on_menu(pos_x, pos_y):
 			for button in self.buttons:
 				button.is_pressed(pos_x, pos_y)
+
+			if self.clear_tops.pressed:
+				self.graph.clear_tops()
+				self.clear_tops.pressed = False
+				
+			elif self.clear_edges.pressed:
+				self.graph.clear_edges()
+				self.clear_edges.pressed = False
+
+			elif self.dfs.pressed:
+				self.graph.DFS()
+
+			elif self.bfs.pressed:
+				self.graph.BFS()
+			
 		else:
 			self.update_max_tops_pressed()
 			self.graph.update_pressed(pos_x, pos_y)
 
 			if self.add_top.pressed:
-				print("Adding top")
 				self.graph.add_top(pos_x, pos_y)
+				
 			elif self.add_edge.pressed:
 				self.graph.add_edge()
+				
 			elif self.delete_top.pressed:
 				self.graph.delete_top(pos_x, pos_y)
+				
 			elif self.delete_edge.pressed:
 				self.graph.delete_edge()
+				
 
-	
 
 	def draw_background(self):
 		pygame.draw.rect(self.screen, self.color, [MENU_WIDTH, 0, self.screen_width-MENU_WIDTH, self.screen_height])
@@ -126,4 +151,5 @@ class Menu:
 			label.draw()
 		for button in self.buttons:
 			button.draw()
+
 
