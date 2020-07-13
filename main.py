@@ -20,7 +20,7 @@ def main():
 
 	screen = pygame.display.set_mode((WIDTH, HEIGHT))
 	G = Graph(screen)
-	menu = Menu(screen, WIDTH, HEIGHT)
+	menu = Menu(G, screen, WIDTH, HEIGHT)
 
 
 	running = True
@@ -35,6 +35,7 @@ def main():
 				menu.click(pos_x, pos_y)
 
 		screen.fill(BACKGROUND_COLOR)
+		G.draw
 		menu.draw()
 		pygame.display.flip()
 

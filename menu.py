@@ -52,7 +52,7 @@ class Button:
 		self.pressed = False
 
 	def is_pressed(self, pos_x, pos_y):
-		if not self.pressed and -self.width <= (pos_x - self.x) <= self.width and -self.height <= (pos_y - self.y) <= self.height:
+		if not self.pressed and self.x <= pos_x <= self.x + self.width and self.y <= pos_y <= self.y + self.height:
 			if not self.pressed:
 				self.pressed = True
 				self.color = BUTTON_PRESSED_COLOR
@@ -70,12 +70,13 @@ class Button:
 
 
 class Menu:
-	def __init__(self, screen, screen_width, screen_height):
+	def __init__(self, graph, screen, screen_width, screen_height):
+		self.graph = graph
 		self.screen = screen
 		self.screen_width = screen_width
 		self.screen_height = screen_height
 		self.color = MENU_COLOR
-		self.title = Label(self.screen, "GraphVisualizator", MENU_WIDTH + BUTTON_SECOND_GAP, 0)
+		self.title = Label(self.screen, "GraphVisualizator", MENU_WIDTH + BUTTON_SECOND_GAP - 5, 5)
 		self.add_top = Button(self.screen, "Add Top", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP)
 		self.add_edge = Button(self.screen, "Add Edge", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + BUTTON_GAP)
 		self.delete_top = Button(self.screen, "Delete Top", MENU_WIDTH + BUTTON_SECOND_GAP, BUTTON_START_GAP + 2*BUTTON_GAP)
@@ -84,9 +85,30 @@ class Menu:
 		self.labels = [self.title]
 		self.buttons = [self.add_top, self.add_edge, self.delete_top, self.delete_edge]
 
+	def is_focused_on_menu(self, pos_x, pos_y):
+		if MENU_WIDTH < pos_x:
+			return True
+		return False
+
 	def click(self, pos_x, pos_y):
-		for button in self.buttons:
-			button.is_pressed(pos_x, pos_y)
+		print((pos_x, pos_y))
+		if self.is_focused_on_menu(pos_x, pos_y):
+			for button in self.buttons:
+				button.is_pressed(pos_x, pos_y)
+		else:
+			self.graph.update_pressed(pos_x, pos_y)
+
+			if self.add_top.pressed:
+				print("Adding top")
+				self.graph.add_top(pos_x, pos_y)
+			elif self.add_edge.pressed:
+				self.graph.add_edge()
+			elif self.delete_top.pressed:
+				self.graph.delete_top(pos_x, pos_y)
+			elif self.delete_edge.pressed:
+				self.graph.delete_edge()
+
+	
 
 	def draw_background(self):
 		pygame.draw.rect(self.screen, self.color, [MENU_WIDTH, 0, self.screen_width-MENU_WIDTH, self.screen_height])
