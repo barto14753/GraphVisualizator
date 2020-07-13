@@ -7,5 +7,5 @@ Requirements:
 App include:
 - adding/deleting tops and edges
 - moving animation
-- randomized edges and fullfilling graph
+- randomized edges and graph fullfilling
 - DFS and BFS algoritms
